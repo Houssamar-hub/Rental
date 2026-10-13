@@ -1,4 +1,4 @@
-package app.rento.backend;
+package app.nexomanager.location;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
