@@ -1,162 +1,152 @@
 -- ============================================================================
--- V1__init_nexomanager_schema.sql : Schéma ERP Interne NexoManager.app
+-- V1__initialisation_schema_fr.sql : Schéma ERP Interne NexoManager.app (FR)
 -- ============================================================================
 
--- 1. Comptes Internes (Owner / Admin & Staff uniquement)
-CREATE TABLE staff_users (
-                             id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                             full_name VARCHAR(120) NOT NULL,
-                             email VARCHAR(150) NOT NULL UNIQUE,
-                             password_hash VARCHAR(255) NOT NULL,
-                             phone VARCHAR(30),
-                             avatar_url VARCHAR(500),
-                             role VARCHAR(30) NOT NULL COMMENT 'ROLE_OWNER, ROLE_STAFF',
-                             active BOOLEAN NOT NULL DEFAULT TRUE,
-                             created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                             updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+CREATE TABLE utilisateurs_staff (
+                                    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                    nom_complet VARCHAR(120) NOT NULL,
+                                    email VARCHAR(150) NOT NULL UNIQUE,
+                                    mot_de_passe_hash VARCHAR(255) NOT NULL,
+                                    telephone VARCHAR(30),
+                                    url_avatar VARCHAR(500),
+                                    role VARCHAR(30) NOT NULL COMMENT 'ROLE_PROPRIETAIRE, ROLE_EMPLOYE',
+                                    actif BOOLEAN NOT NULL DEFAULT TRUE,
+                                    date_creation TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                    date_modification TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- 2. Parc Automobile (Module "Units" & "Unit Details")
-CREATE TABLE units (
-                       id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                       unit_code VARCHAR(30) NOT NULL UNIQUE COMMENT 'Ex: TX1234, HX5678, CX2345',
-                       registration_plate VARCHAR(30) NOT NULL UNIQUE,
-                       brand VARCHAR(80) NOT NULL COMMENT 'Ex: Audi, Aston Martin, Hyundai, Range Rover',
-                       model VARCHAR(80) NOT NULL COMMENT 'Ex: A6, Q7, Sonata, Velar',
-                       category VARCHAR(40) NOT NULL COMMENT 'SEDAN, SUV, HATCHBACK, CONVERTIBLE, TRUCK, MINIVAN',
-                       status VARCHAR(30) NOT NULL DEFAULT 'AVAILABLE' COMMENT 'AVAILABLE, MAINTENANCE, UNAVAILABLE, ON_TRIP',
-                       transmission VARCHAR(20) NOT NULL COMMENT 'AUTOMATIC, MANUAL',
-                       fuel_type VARCHAR(20) NOT NULL COMMENT 'PETROL, DIESEL, GASOLINE, HYBRID, ELECTRIC',
-                       seats INT NOT NULL DEFAULT 5,
-                       daily_rate DECIMAL(10,2) NOT NULL,
-                       stock_count INT NOT NULL DEFAULT 1,
-                       range_description VARCHAR(80) COMMENT 'Ex: 400 miles on a full tank',
-                       top_speed VARCHAR(50) COMMENT 'Ex: 130 mph',
-                       acceleration VARCHAR(60) COMMENT 'Ex: 6.1 seconds (0-60 mph)',
-                       total_km_year INT NOT NULL DEFAULT 0 COMMENT 'Ex: 489 Km sur Unit Details',
-                       about_description TEXT,
-                       features_json TEXT COMMENT 'Liste JSON: Air Conditioning, Bluetooth, Backup Camera, Cruise Control...',
-                       image_url VARCHAR(500),
-                       gallery_json TEXT,
-                       last_latitude DECIMAL(10,7) DEFAULT 33.5731104,
-                       last_longitude DECIMAL(10,7) DEFAULT -7.5898434,
-                       created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                       updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                       INDEX idx_units_filter (category, status)
+CREATE TABLE vehicules (
+                           id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                           code_vehicule VARCHAR(30) NOT NULL UNIQUE,
+                           matricule VARCHAR(30) NOT NULL UNIQUE,
+                           marque VARCHAR(80) NOT NULL,
+                           modele VARCHAR(80) NOT NULL,
+                           categorie VARCHAR(40) NOT NULL COMMENT 'BERLINE, SUV, CITADINE, CABRIOLET, UTILITAIRE, MONOSPACE',
+                           statut VARCHAR(30) NOT NULL DEFAULT 'DISPONIBLE' COMMENT 'DISPONIBLE, MAINTENANCE, INDISPONIBLE, EN_TRAJET',
+                           transmission VARCHAR(20) NOT NULL COMMENT 'AUTOMATIQUE, MANUELLE',
+                           type_carburant VARCHAR(20) NOT NULL COMMENT 'ESSENCE, DIESEL, HYBRIDE, ELECTRIQUE',
+                           nombre_places INT NOT NULL DEFAULT 5,
+                           tarif_journalier DECIMAL(10,2) NOT NULL,
+                           quantite_stock INT NOT NULL DEFAULT 1,
+                           autonomie_description VARCHAR(80),
+                           vitesse_maximale VARCHAR(50),
+                           acceleration VARCHAR(60),
+                           kilometrage_annuel INT NOT NULL DEFAULT 0,
+                           description_apropos TEXT,
+                           equipements_json TEXT,
+                           url_image VARCHAR(500),
+                           derniere_latitude DECIMAL(10,7) DEFAULT 33.5731104,
+                           derniere_longitude DECIMAL(10,7) DEFAULT -7.5898434,
+                           date_creation TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                           date_modification TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                           INDEX idx_vehicules_filtre (categorie, statut)
 );
 
--- 3. Clients CRM (Module "Clients")
 CREATE TABLE clients (
                          id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                         full_name VARCHAR(120) NOT NULL,
+                         nom_complet VARCHAR(120) NOT NULL,
                          email VARCHAR(150) NOT NULL UNIQUE,
-                         phone VARCHAR(30) NOT NULL,
-                         address VARCHAR(255) NOT NULL,
-                         avatar_url VARCHAR(500),
-                         residence_card_doc_url VARCHAR(500) COMMENT 'Ex: Alice s Residence Card / CIN',
-                         driver_license_doc_url VARCHAR(500) COMMENT 'Ex: Alice s License',
-                         loyalty_points INT NOT NULL DEFAULT 0,
-                         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                         updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                         telephone VARCHAR(30) NOT NULL,
+                         adresse VARCHAR(255) NOT NULL,
+                         url_avatar VARCHAR(500),
+                         url_carte_identite VARCHAR(500),
+                         url_permis_conduire VARCHAR(500),
+                         points_fidelite INT NOT NULL DEFAULT 0,
+                         date_creation TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                         date_modification TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- 4. Chauffeurs (Module "Drivers")
-CREATE TABLE drivers (
+CREATE TABLE chauffeurs (
+                            id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                            nom_complet VARCHAR(120) NOT NULL,
+                            email VARCHAR(150) NOT NULL UNIQUE,
+                            telephone VARCHAR(30) NOT NULL,
+                            adresse VARCHAR(255),
+                            url_avatar VARCHAR(500),
+                            statut VARCHAR(30) NOT NULL DEFAULT 'EN_SERVICE' COMMENT 'EN_SERVICE, CONGE_MALADIE, DEMI_JOURNEE',
+                            heures_travaillees INT NOT NULL DEFAULT 0,
+                            note_performance DECIMAL(3,2) NOT NULL DEFAULT 4.50,
+                            date_creation TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                            date_modification TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE reservations (
+                              id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                              code_reservation VARCHAR(30) NOT NULL UNIQUE COMMENT 'Ex: RES-NX1001',
+                              date_reservation DATE NOT NULL,
+                              client_id BIGINT NOT NULL,
+                              vehicule_id BIGINT NOT NULL,
+                              chauffeur_id BIGINT NULL,
+                              duree_jours INT NOT NULL,
+                              date_heure_debut TIMESTAMP NOT NULL,
+                              date_heure_fin TIMESTAMP NOT NULL,
+                              montant_total DECIMAL(10,2) NOT NULL,
+                              statut_paiement VARCHAR(20) NOT NULL DEFAULT 'EN_ATTENTE' COMMENT 'PAYE, EN_ATTENTE',
+                              statut VARCHAR(20) NOT NULL DEFAULT 'EN_COURS' COMMENT 'EN_COURS, RETOURNEE, ANNULEE',
+                              notes VARCHAR(500),
+                              distance_trajet_km DECIMAL(8,2) DEFAULT 0.00,
+                              date_creation TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                              date_modification TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                              CONSTRAINT fk_res_client FOREIGN KEY (client_id) REFERENCES clients(id),
+                              CONSTRAINT fk_res_vehicule FOREIGN KEY (vehicule_id) REFERENCES vehicules(id),
+                              CONSTRAINT fk_res_chauffeur FOREIGN KEY (chauffeur_id) REFERENCES chauffeurs(id),
+                              INDEX idx_res_dates (date_heure_debut, date_heure_fin),
+                              INDEX idx_res_statut (statut, statut_paiement)
+);
+
+CREATE TABLE factures (
+                          id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                          code_facture VARCHAR(30) NOT NULL UNIQUE COMMENT 'Ex: FAC-NX1001',
+                          reservation_id BIGINT NOT NULL,
+                          client_id BIGINT NOT NULL,
+                          vehicule_id BIGINT NOT NULL,
+                          tarif_journalier DECIMAL(10,2) NOT NULL,
+                          duree_jours INT NOT NULL,
+                          montant DECIMAL(10,2) NOT NULL,
+                          date_echeance DATE NOT NULL,
+                          statut VARCHAR(20) NOT NULL DEFAULT 'EN_ATTENTE' COMMENT 'COMPLETEE, EN_ATTENTE, EN_RETARD',
+                          date_creation TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                          date_modification TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                          CONSTRAINT fk_fac_reservation FOREIGN KEY (reservation_id) REFERENCES reservations(id),
+                          CONSTRAINT fk_fac_client FOREIGN KEY (client_id) REFERENCES clients(id),
+                          CONSTRAINT fk_fac_vehicule FOREIGN KEY (vehicule_id) REFERENCES vehicules(id)
+);
+
+CREATE TABLE depenses (
+                          id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                          intitule VARCHAR(150) NOT NULL,
+                          categorie VARCHAR(40) NOT NULL COMMENT 'MAINTENANCE_VEHICULE, SALAIRES_STAFF, CARBURANT, ASSURANCE, FOURNITURES_BUREAU, MARKETING',
+                          quantite INT NOT NULL DEFAULT 1,
+                          montant DECIMAL(10,2) NOT NULL,
+                          date_depense DATE NOT NULL,
+                          statut VARCHAR(20) NOT NULL DEFAULT 'COMPLETEE' COMMENT 'COMPLETEE, EN_ATTENTE',
+                          vehicule_id BIGINT NULL,
+                          date_creation TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                          date_modification TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                          CONSTRAINT fk_dep_vehicule FOREIGN KEY (vehicule_id) REFERENCES vehicules(id)
+);
+
+CREATE TABLE rappels (
                          id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                         full_name VARCHAR(120) NOT NULL,
-                         email VARCHAR(150) NOT NULL UNIQUE,
-                         phone VARCHAR(30) NOT NULL,
-                         address VARCHAR(255),
-                         avatar_url VARCHAR(500),
-                         status VARCHAR(30) NOT NULL DEFAULT 'ON_DUTY' COMMENT 'ON_DUTY, SICK_LEAVE, HALF_DAY_LEAVE',
-                         work_hours INT NOT NULL DEFAULT 0 COMMENT 'Ex: 248 hours',
-                         performance_rating DECIMAL(3,2) NOT NULL DEFAULT 4.50 COMMENT 'Ex: 4.5 Excellent',
-                         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                         updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                         titre VARCHAR(200) NOT NULL,
+                         date_rappel DATE NOT NULL,
+                         heure_rappel VARCHAR(20) DEFAULT '09:00',
+                         vehicule_id BIGINT NULL,
+                         termine BOOLEAN NOT NULL DEFAULT FALSE,
+                         date_creation TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                         date_modification TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                         CONSTRAINT fk_rappel_vehicule FOREIGN KEY (vehicule_id) REFERENCES vehicules(id)
 );
 
--- 5. Réservations & Planning (Modules "Bookings", "Calendar" & "Tracking")
-CREATE TABLE bookings (
-                          id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                          booking_code VARCHAR(30) NOT NULL UNIQUE COMMENT 'Ex: BK-NX1001',
-                          booking_date DATE NOT NULL,
-                          client_id BIGINT NOT NULL,
-                          unit_id BIGINT NOT NULL,
-                          driver_id BIGINT NULL COMMENT 'Optionnel : avec ou sans chauffeur',
-                          plan_days INT NOT NULL,
-                          start_datetime TIMESTAMP NOT NULL,
-                          end_datetime TIMESTAMP NOT NULL,
-                          total_amount DECIMAL(10,2) NOT NULL,
-                          payment_status VARCHAR(20) NOT NULL DEFAULT 'PENDING' COMMENT 'PAID, PENDING',
-                          status VARCHAR(20) NOT NULL DEFAULT 'ONGOING' COMMENT 'ONGOING, RETURNED, CANCELLED',
-                          notes VARCHAR(500) COMMENT 'Ex: Client requested a child safety seat',
-                          trip_distance_km DECIMAL(8,2) DEFAULT 0.00,
-                          created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                          updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                          CONSTRAINT fk_booking_client FOREIGN KEY (client_id) REFERENCES clients(id),
-                          CONSTRAINT fk_booking_unit FOREIGN KEY (unit_id) REFERENCES units(id),
-                          CONSTRAINT fk_booking_driver FOREIGN KEY (driver_id) REFERENCES drivers(id),
-                          INDEX idx_bookings_dates (start_datetime, end_datetime),
-                          INDEX idx_bookings_status (status, payment_status)
-);
-
--- 6. Factures (Module "Financials -> Payments")
-CREATE TABLE invoices (
-                          id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                          invoice_code VARCHAR(30) NOT NULL UNIQUE COMMENT 'Ex: INV-NX1001',
-                          booking_id BIGINT NOT NULL,
-                          client_id BIGINT NOT NULL,
-                          unit_id BIGINT NOT NULL,
-                          rate_per_day DECIMAL(10,2) NOT NULL,
-                          rental_days INT NOT NULL,
-                          amount DECIMAL(10,2) NOT NULL,
-                          due_date DATE NOT NULL,
-                          status VARCHAR(20) NOT NULL DEFAULT 'AWAITING' COMMENT 'COMPLETED, AWAITING, OVERDUE',
-                          created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                          updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                          CONSTRAINT fk_inv_booking FOREIGN KEY (booking_id) REFERENCES bookings(id),
-                          CONSTRAINT fk_inv_client FOREIGN KEY (client_id) REFERENCES clients(id),
-                          CONSTRAINT fk_inv_unit FOREIGN KEY (unit_id) REFERENCES units(id)
-);
-
--- 7. Dépenses (Module "Financials -> Expenses")
-CREATE TABLE expenses (
-                          id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                          title VARCHAR(150) NOT NULL COMMENT 'Ex: Oil Change, Fuel Purchase, Insurance Payment',
-                          category VARCHAR(40) NOT NULL COMMENT 'VEHICLE_MAINTENANCE, STAFF_SALARIES, FUEL, INSURANCE, OFFICE_SUPPLIES, MARKETING',
-                          quantity INT NOT NULL DEFAULT 1,
-                          amount DECIMAL(10,2) NOT NULL,
-                          expense_date DATE NOT NULL,
-                          status VARCHAR(20) NOT NULL DEFAULT 'COMPLETED' COMMENT 'COMPLETED, PENDING',
-                          unit_id BIGINT NULL,
-                          created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                          updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                          CONSTRAINT fk_expense_unit FOREIGN KEY (unit_id) REFERENCES units(id)
-);
-
--- 8. Rappels Opérationnels (Bloc "Reminders" sur Dashboard & Unit Details)
-CREATE TABLE reminders (
-                           id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                           title VARCHAR(200) NOT NULL,
-                           reminder_date DATE NOT NULL,
-                           reminder_time VARCHAR(20) DEFAULT '09:00 AM',
-                           unit_id BIGINT NULL,
-                           completed BOOLEAN NOT NULL DEFAULT FALSE,
-                           created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                           updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                           CONSTRAINT fk_reminder_unit FOREIGN KEY (unit_id) REFERENCES units(id)
-);
-
--- 9. Messagerie Temps Réel (Module "Messages")
-CREATE TABLE chat_messages (
+CREATE TABLE messages_chat (
                                id BIGINT AUTO_INCREMENT PRIMARY KEY,
                                client_id BIGINT NOT NULL,
-                               sender_type VARCHAR(20) NOT NULL COMMENT 'STAFF, CLIENT',
-                               sender_name VARCHAR(120) NOT NULL,
-                               content TEXT NOT NULL,
-                               attachment_url VARCHAR(500) NULL COMMENT 'Ex: Photo rayure véhicule',
-                               is_read BOOLEAN NOT NULL DEFAULT FALSE,
-                               created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                               updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                               CONSTRAINT fk_chat_client FOREIGN KEY (client_id) REFERENCES clients(id)
+                               type_expediteur VARCHAR(20) NOT NULL COMMENT 'STAFF, CLIENT',
+                               nom_expediteur VARCHAR(120) NOT NULL,
+                               contenu TEXT NOT NULL,
+                               url_piece_jointe VARCHAR(500) NULL,
+                               lu BOOLEAN NOT NULL DEFAULT FALSE,
+                               date_creation TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                               date_modification TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                               CONSTRAINT fk_msg_client FOREIGN KEY (client_id) REFERENCES clients(id)
 );
