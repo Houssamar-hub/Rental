@@ -1,10 +1,10 @@
-package app.nexomanager.location;
+package app.nexomanager.backend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class BackendApplicationTests {
+class NexoManagerApplicationTests {
 
     @Test
     void contextLoads() {
