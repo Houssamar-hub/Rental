@@ -77,11 +77,6 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- WebSocket & STOMP Messaging -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-websocket</artifactId>
-        </dependency>
 
         <!-- OpenAPI / Swagger UI -->
         <dependency>

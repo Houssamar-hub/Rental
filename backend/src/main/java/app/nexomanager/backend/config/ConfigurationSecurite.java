@@ -47,7 +47,6 @@ public class ConfigurationSecurite {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/connexion").permitAll()
-                        .requestMatchers("/ws/**").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/api/v1/finances/depenses/**").hasAuthority("ROLE_PROPRIETAIRE")
                         .anyRequest().hasAnyAuthority("ROLE_PROPRIETAIRE", "ROLE_EMPLOYE")
