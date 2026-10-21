@@ -26,9 +26,6 @@ export const useUIStore = create((set) => ({
   sidebarCollapsed: false,
   toggleSidebar: () => set((s) => ({ sidebarCollapsed: !s.sidebarCollapsed })),
 
-  unreadMessages: 6,
-  setUnreadMessages: (count) => set({ unreadMessages: count }),
-
   notifications: [],
   addNotification: (notif) => set((s) => ({ notifications: [notif, ...s.notifications].slice(0, 20) })),
   clearNotifications: () => set({ notifications: [] }),

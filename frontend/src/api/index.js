@@ -82,8 +82,3 @@ export const financeAPI = {
   getExpenses: () => api.get('/finances/depenses'),
   createExpense: (data) => api.post('/finances/depenses', data),
 };
-
-// ─── Messages ────────────────────────────────────────────────────────────
-export const messagesAPI = {
-  getByClient: (clientId) => api.get(`/messages/client/${clientId}`),
-};

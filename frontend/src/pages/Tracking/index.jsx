@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, MessageSquare, MapPin, Clock, Navigation, Car } from 'lucide-react';
+import { Search, MapPin, Clock, Navigation, Car } from 'lucide-react';
 
 // ─── Mock Data ────────────────────────────────────────────────────────────────
 const mockVehicles = [
@@ -187,11 +187,6 @@ function MockMap({ vehicle }) {
                 <span>Distance</span>
               </div>
             </div>
-
-            <button className="flex-shrink-0 flex items-center gap-1.5 bg-red-500 hover:bg-red-600 text-white text-xs font-medium px-3 py-2 rounded-lg transition-colors">
-              <MessageSquare size={13} />
-              Message
-            </button>
           </div>
         </div>
       )}
@@ -232,12 +227,6 @@ function RentInfoCard({ vehicle }) {
         <p className="text-sm font-semibold text-slate-600">{vehicle.car}</p>
         <p className="text-xs text-slate-400">{vehicle.plate}</p>
       </div>
-
-      {/* Send message button */}
-      <button className="w-full flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white font-medium py-2.5 rounded-xl transition-colors text-sm">
-        <MessageSquare size={15} />
-        Send a message
-      </button>
 
       {/* Trip details */}
       <div className="flex flex-col gap-3">

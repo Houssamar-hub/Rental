@@ -12,7 +12,6 @@ import Drivers from './pages/Drivers';
 import Payments from './pages/Financials/Payments';
 import Expenses from './pages/Financials/Expenses';
 import Tracking from './pages/Tracking';
-import Messages from './pages/Messages';
 
 function ProtectedRoute({ children }) {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
@@ -57,7 +56,6 @@ export default function App() {
           <Route path="/financials/payments" element={<Payments />} />
           <Route path="/financials/expenses" element={<Expenses />} />
           <Route path="/tracking" element={<Tracking />} />
-          <Route path="/messages" element={<Messages />} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Route>
       </Routes>

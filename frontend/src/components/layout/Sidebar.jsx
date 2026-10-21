@@ -1,9 +1,9 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, CalendarDays, Car, Calendar, Users, UserCheck,
-  Wallet, Navigation, MessageCircle, LogOut, ChevronDown
+  Wallet, Navigation, LogOut, ChevronDown
 } from 'lucide-react';
-import { useAuthStore, useUIStore } from '../../store';
+import { useAuthStore } from '../../store';
 import { cn } from '../../utils';
 
 const navItems = [
@@ -22,12 +22,9 @@ const navItems = [
     ],
   },
   { to: '/tracking', icon: Navigation, label: 'Tracking' },
-  { to: '/messages', icon: MessageCircle, label: 'Messages', badge: true },
 ];
 
 function NavItem({ item }) {
-  const unread = useUIStore((s) => s.unreadMessages);
-
   if (item.children) {
     return <FinancialsMenu item={item} />;
   }
@@ -48,11 +45,6 @@ function NavItem({ item }) {
         <>
           <item.icon className={cn('w-4 h-4 flex-shrink-0', isActive ? 'text-red-500' : 'text-slate-400 group-hover:text-slate-600')} />
           <span className="flex-1">{item.label}</span>
-          {item.badge && unread > 0 && (
-            <span className="w-5 h-5 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center">
-              {unread > 9 ? '9+' : unread}
-            </span>
-          )}
         </>
       )}
     </NavLink>
